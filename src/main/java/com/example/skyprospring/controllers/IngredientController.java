@@ -14,11 +14,8 @@ public class IngredientController {
         this.ingredientService = ingredientService;
     }
 
-    @GetMapping()
-    public ResponseEntity createIngredient(
-            @RequestParam String name, @RequestParam int weight, @RequestParam String measureUnits)
-    {
-        Ingredient ingredient = new Ingredient(name, weight, measureUnits);
+    @PostMapping()
+    public ResponseEntity createIngredient(@RequestBody Ingredient ingredient) {
         ingredientService.addIngredient(ingredient);
         return ResponseEntity.ok(ingredient);
     }
@@ -27,9 +24,9 @@ public class IngredientController {
     @GetMapping("get")
     public ResponseEntity getIngredient(@RequestParam int ingredientId) {
         Ingredient ingredient = ingredientService.getIngredientById(ingredientId);
-                if (ingredient == null) {
-                    return ResponseEntity.notFound().build();
-                }
+        if (ingredient == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(ingredient);
     }
 }

@@ -3,10 +3,7 @@ package com.example.skyprospring.controllers;
 import com.example.skyprospring.model.Recipe;
 import com.example.skyprospring.services.RecipeService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/recipe")
 @RestController
@@ -16,6 +13,12 @@ public class RecipeController {
 
     public RecipeController(RecipeService recipeService) {
         this.recipeService = recipeService;
+    }
+
+    @PostMapping
+    public ResponseEntity createRecipe(@RequestBody Recipe recipe){
+        recipeService.addRecipe(recipe);
+        return ResponseEntity.ok(recipe);
     }
 
     @GetMapping("get")

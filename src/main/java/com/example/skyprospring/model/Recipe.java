@@ -12,5 +12,5 @@ public class Recipe {
     private String name;
     private int time;  //minutes
     private List<Ingredient> ingredients;
-    private LinkedList<String> steps;
+    private List<String> steps;
 }

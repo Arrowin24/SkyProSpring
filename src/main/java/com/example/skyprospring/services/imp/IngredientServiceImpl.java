@@ -14,11 +14,41 @@ public class IngredientServiceImpl implements IngredientService {
 
     @Override
     public Ingredient getIngredientById(long id) {
-        return ingredients.get(id);
+        if (ingredients.containsKey(id)) {
+            return ingredients.get(id);
+        }
+        return null;
     }
 
     @Override
-    public void addIngredient(Ingredient ingredient) {
-        ingredients.put(lastId++, ingredient);
+    public Map<Long, Ingredient> getAllIngredients() {
+        if(ingredients.isEmpty()){
+            return null;
+        }
+        return ingredients;
+    }
+
+    @Override
+    public long addIngredient(Ingredient ingredient) {
+        ingredients.put(lastId, ingredient);
+        return lastId++;
+    }
+
+    @Override
+    public Ingredient editIngredient(long id, Ingredient newIngredient) {
+        if (ingredients.containsKey(id)) {
+            ingredients.put(id, newIngredient);
+            return ingredients.get(id);
+        }
+        return null;
+    }
+
+    @Override
+    public boolean removeIngredient(long id) {
+        if (ingredients.containsKey(id)) {
+            ingredients.remove(id);
+            return true;
+        }
+        return false;
     }
 }

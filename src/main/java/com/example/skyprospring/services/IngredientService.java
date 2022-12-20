@@ -1,9 +1,18 @@
 package com.example.skyprospring.services;
 
 import com.example.skyprospring.model.Ingredient;
-import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 public interface IngredientService {
-    public Ingredient getIngredientById(long id);
-    public void addIngredient(Ingredient ingredient);
+    Ingredient getIngredientById(long id);
+
+    Map<Long,Ingredient> getAllIngredients();
+
+    long addIngredient(Ingredient ingredient);
+
+
+    Ingredient editIngredient(long id, Ingredient newIngredient);
+
+    boolean removeIngredient(long id);
 }

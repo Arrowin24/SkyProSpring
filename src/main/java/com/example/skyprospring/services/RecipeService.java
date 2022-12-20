@@ -1,10 +1,24 @@
 package com.example.skyprospring.services;
 
-import com.example.skyprospring.model.Ingredient;
+
 import com.example.skyprospring.model.Recipe;
-import org.springframework.stereotype.Service;
+
+
+import java.util.List;
+import java.util.Map;
 
 public interface RecipeService {
-    public Recipe getRecipeById(long id);
-    public void addRecipe(Recipe recipe);
+    Recipe getRecipeById(long id);
+
+    Map<Long, Recipe> getAllRecipes();
+
+    long addRecipe(Recipe recipe);
+
+    Recipe editRecipe(long id, Recipe newRecipe);
+
+    boolean removeRecipe(long id);
+
+    List<Recipe> getRecipesByIngredientsId(List<Long> ids);
+
+    List<Recipe> getTensRecipeByPage(long page);
 }

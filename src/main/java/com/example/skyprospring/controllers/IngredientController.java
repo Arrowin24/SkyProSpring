@@ -5,6 +5,8 @@ import com.example.skyprospring.services.IngredientService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RequestMapping("/ingredient")
 @RestController
 public class IngredientController {
@@ -15,18 +17,43 @@ public class IngredientController {
     }
 
     @PostMapping()
-    public ResponseEntity createIngredient(@RequestBody Ingredient ingredient) {
-        ingredientService.addIngredient(ingredient);
-        return ResponseEntity.ok(ingredient);
+    public ResponseEntity<Long> addIngredient(@RequestBody Ingredient ingredient) {
+        long id = ingredientService.addIngredient(ingredient);
+        return ResponseEntity.ok(id);
     }
 
 
-    @GetMapping("get")
-    public ResponseEntity getIngredient(@RequestParam int ingredientId) {
-        Ingredient ingredient = ingredientService.getIngredientById(ingredientId);
-        if (ingredient == null) {
-            return ResponseEntity.notFound().build();
+    @GetMapping("/{id}")
+    public ResponseEntity<Ingredient> getIngredient(@PathVariable int id) {
+        Ingredient ingredient = ingredientService.getIngredientById(id);
+        if (ingredient != null) {
+            return ResponseEntity.ok(ingredient);
         }
-        return ResponseEntity.ok(ingredient);
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<Map<Long, Ingredient>> getAllIngredients() {
+        if (ingredientService.getAllIngredients()!=null) {
+            return ResponseEntity.ok(ingredientService.getAllIngredients());
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Ingredient> editIngredient(@PathVariable long id, @RequestBody Ingredient newIngredient) {
+        if (ingredientService.getIngredientById(id) != null) {
+            Ingredient ingredient = ingredientService.editIngredient(id, newIngredient);
+            return ResponseEntity.ok(ingredient);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteIngredient(@PathVariable long id) {
+        if (ingredientService.removeIngredient(id)) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 }

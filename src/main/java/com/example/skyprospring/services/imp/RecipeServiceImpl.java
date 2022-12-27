@@ -2,10 +2,15 @@ package com.example.skyprospring.services.imp;
 
 import com.example.skyprospring.model.Ingredient;
 import com.example.skyprospring.model.Recipe;
+import com.example.skyprospring.services.FilesService;
 import com.example.skyprospring.services.IngredientService;
 import com.example.skyprospring.services.RecipeService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,13 +20,20 @@ import java.util.TreeMap;
 public class RecipeServiceImpl implements RecipeService {
 
     private final IngredientService ingredientService;
+    private final FilesService filesService;
 
-    public RecipeServiceImpl(IngredientService ingredientService) {
+    public RecipeServiceImpl(IngredientService ingredientService, FilesService filesService) {
         this.ingredientService = ingredientService;
+        this.filesService = filesService;
     }
 
-    private final Map<Long, Recipe> recipes = new TreeMap<>();
+    private  Map<Long, Recipe> recipes = new TreeMap<>();
     private static long lastId = 0;
+
+    @PostConstruct
+    private void init() {
+        readFromFile();
+    }
 
     @Override
     public Recipe getRecipeById(long id) {
@@ -42,6 +54,7 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     public long addRecipe(Recipe recipe) {
         recipes.put(lastId, recipe);
+        saveToFile();
         return lastId++;
     }
 
@@ -49,6 +62,7 @@ public class RecipeServiceImpl implements RecipeService {
     public Recipe editRecipe(long id, Recipe newRecipe) {
         if (recipes.containsKey(id)) {
             recipes.put(id, newRecipe);
+            saveToFile();
             return recipes.get(id);
         }
         return null;
@@ -58,6 +72,7 @@ public class RecipeServiceImpl implements RecipeService {
     public boolean removeRecipe(long id) {
         if (recipes.containsKey(id)) {
             recipes.remove(id);
+            saveToFile();
             return true;
         }
         return false;
@@ -105,6 +120,30 @@ public class RecipeServiceImpl implements RecipeService {
             }
         }
         return tenRecipes;
+    }
+
+    private void readFromFile() {
+        try {
+            String json = filesService.readRecipesFromFile();
+            if(!json.isBlank()){
+                recipes = new ObjectMapper().readValue(json, new TypeReference<>() {
+                });
+                lastId = recipes.size();
+            }
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void saveToFile() {
+        try {
+            String json = new ObjectMapper().writeValueAsString(recipes);
+            filesService.saveRecipesToFile(json);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
 

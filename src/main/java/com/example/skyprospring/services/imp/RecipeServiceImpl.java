@@ -67,17 +67,18 @@ public class RecipeServiceImpl implements RecipeService {
     public List<Recipe> getRecipesByIngredientsId(List<Long> ids) {
         List<Ingredient> ingredientList = getIngredientListById(ids);
         List<Recipe> recipeList = new ArrayList<>();
-        if (ingredientList == null) {
+        if (ingredientList.isEmpty()) {
             return null;
         }
         for (long i = 0; i < recipes.size(); i++) {
             boolean isContainsAll = true;
             for (Ingredient ingredient : ingredientList) {
-                if(!recipes.get(i).getIngredients().contains(ingredient)){
+                if (!recipes.get(i).getIngredients().contains(ingredient)) {
                     isContainsAll = false;
+                    break;
                 }
             }
-            if(isContainsAll){
+            if (isContainsAll) {
                 recipeList.add(recipes.get(i));
             }
         }
@@ -88,7 +89,7 @@ public class RecipeServiceImpl implements RecipeService {
         List<Ingredient> ingredientList = new ArrayList<>();
         for (Long id : ids) {
             if (ingredientService.getIngredientById(id) == null) {
-                return null;
+                continue;
             }
             ingredientList.add(ingredientService.getIngredientById(id));
         }
@@ -96,10 +97,10 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public List<Recipe> getTensRecipeByPage(long page){
+    public List<Recipe> getTensRecipeByPage(long page) {
         List<Recipe> tenRecipes = new ArrayList<>();
-        for(long i = page-1;i<page*10;i++){
-            if(recipes.containsKey(i)){
+        for (long i = page*10; i < (page+1) * 10; i++) {
+            if (recipes.containsKey(i)) {
                 tenRecipes.add(recipes.get(i));
             }
         }

@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,14 +38,21 @@ public class IngredientController {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Создан ингредиент и добавлен в список"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Скорее всего вы не указали название ингредиента"
                     )
             }
     )
     public ResponseEntity<Long> addIngredient(
             @RequestBody Ingredient ingredient)
     {
-        long id = ingredientService.addIngredient(ingredient);
-        return ResponseEntity.ok(id);
+        if (StringUtils.isNoneBlank(ingredient.getName())) {
+            long id = ingredientService.addIngredient(ingredient);
+            return ResponseEntity.ok(id);
+        }
+        return  ResponseEntity.notFound().build();
     }
 
 
@@ -60,6 +68,11 @@ public class IngredientController {
                                             schema = @Schema(implementation = Ingredient.class)
                                     )
                             }
+
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Скорее всего ингидиента с таким id не существует"
                     )
             }
     )
@@ -93,12 +106,16 @@ public class IngredientController {
                                             )
                                     )
                             }
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Скорее всего пока нет ни одного ингредиента"
                     )
             }
     )
     @GetMapping
     public ResponseEntity<Map<Long, Ingredient>> getAllIngredients() {
-        Map<Long,Ingredient> ingredients = ingredientService.getAllIngredients();
+        Map<Long, Ingredient> ingredients = ingredientService.getAllIngredients();
         if (ingredients != null) {
             return ResponseEntity.ok(ingredients);
         }
@@ -120,6 +137,10 @@ public class IngredientController {
                                             schema = @Schema(implementation = Ingredient.class)
                                     )
                             }
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Скорее всего нет ингредиента с таким id"
                     )
             }
     )
@@ -134,8 +155,21 @@ public class IngredientController {
         }
         return ResponseEntity.notFound().build();
     }
+
     @Operation(
             summary = "Удаление ингредиента из списка"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Ингредиент имел данный id и удален"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Скорее всего нет ингредиента с таким id"
+                    )
+            }
     )
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteIngredient(

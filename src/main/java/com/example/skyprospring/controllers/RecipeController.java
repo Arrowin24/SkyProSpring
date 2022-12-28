@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,15 +47,21 @@ public class RecipeController {
                                             mediaType = "application/json"
                                     )
                             }
-                    )
+                    ), @ApiResponse(
+                    responseCode = "404",
+                    description = "Скорее всего не указано имя рецепта"
+            )
             }
     )
     @PostMapping
     public ResponseEntity<Long> createRecipe(
             @RequestBody Recipe recipe)
     {
-        long id = recipeService.addRecipe(recipe);
-        return ResponseEntity.ok(id);
+        if (StringUtils.isNoneBlank(recipe.getName())) {
+            long id = recipeService.addRecipe(recipe);
+            return ResponseEntity.ok(id);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @Operation(
@@ -73,7 +80,10 @@ public class RecipeController {
                                             )
                                     )
                             }
-                    )
+                    ), @ApiResponse(
+                    responseCode = "404",
+                    description = "Скорее всего нет рецепта  с таким id"
+            )
             }
     )
     @GetMapping("/{id}")
@@ -105,7 +115,10 @@ public class RecipeController {
                                             )
                                     )
                             }
-                    )
+                    ), @ApiResponse(
+                    responseCode = "404",
+                    description = "Скорее всего нет ни одного рецепта"
+            )
             }
     )
     @GetMapping()
@@ -135,7 +148,10 @@ public class RecipeController {
                                             )
                                     )
                             }
-                    )
+                    ), @ApiResponse(
+                    responseCode = "404",
+                    description = "Скорее всего нет ингредиента с таким id"
+            )
             }
     )
     @Parameters(
@@ -144,7 +160,7 @@ public class RecipeController {
                     examples = {
                             @ExampleObject(name = "1"), @ExampleObject(name = "2")
                     },
-                    description = "Страницы нужно указывать с 1 и т.д."
+                    description = "Страницы нужно указывать с 0 и т.д."
             )
     )
     @GetMapping("/tenPerPage/{page}")
@@ -177,7 +193,10 @@ public class RecipeController {
                                             )
                                     )
                             }
-                    )
+                    ), @ApiResponse(
+                    responseCode = "404",
+                    description = "Скорее всего нет ни одного рецепта с такими игредиентами"
+            )
             }
     )
     @GetMapping("/sorted/byIngredients")
@@ -193,6 +212,22 @@ public class RecipeController {
 
     @Operation(
             summary = "Редактирование рецепта по id"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Рецепт редактирован",
+                            content = {
+                                    @Content(
+                                            mediaType = "application/json"
+                                    )
+                            }
+                    ), @ApiResponse(
+                    responseCode = "404",
+                    description = "Скорее всего указано неверное id рецепта"
+            )
+            }
     )
     @PutMapping("/{id}")
     public ResponseEntity<Recipe> editIngredient(

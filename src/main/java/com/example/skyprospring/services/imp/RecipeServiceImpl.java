@@ -99,7 +99,7 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     public List<Recipe> getTensRecipeByPage(long page) {
         List<Recipe> tenRecipes = new ArrayList<>();
-        for (long i = page*10; i < (page+1) * 10; i++) {
+        for (long i = page * 10; i < (page + 1) * 10; i++) {
             if (recipes.containsKey(i)) {
                 tenRecipes.add(recipes.get(i));
             }

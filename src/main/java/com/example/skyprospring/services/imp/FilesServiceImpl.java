@@ -5,15 +5,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Service
 public class FilesServiceImpl implements FilesService {
-    @Value("${path.to.data.file}") private String dataFilePath;
-    @Value("${name.of.ingredient.file}") private String ingredientsFileName;
-    @Value("${name.of.recipe.file}") private String recipesFileName;
+    @Value("${path.to.data.file}")
+    private String dataFilePath;
+    @Value("${name.of.ingredient.file}")
+    private String ingredientsFileName;
+    @Value("${name.of.recipe.file}")
+    private String recipesFileName;
 
     @PostConstruct
     private void init() {
@@ -51,6 +55,24 @@ public class FilesServiceImpl implements FilesService {
         return readFromFile(recipesFileName);
     }
 
+    @Override
+    public void cleanIngredientFile(){
+        cleanFile(ingredientsFileName);
+    }
+    @Override
+    public void cleanRecipeFile(){
+        cleanFile(recipesFileName);
+    }
+
+    @Override
+    public File getRecipeDataFile() {
+        return new File(dataFilePath + "/" + recipesFileName);
+    }
+    @Override
+    public File getIngredientDataFile() {
+        return new File(dataFilePath + "/" + ingredientsFileName);
+    }
+
     private boolean saveToFile(String fileName, String json) {
         try {
             cleanFile(fileName);
@@ -80,4 +102,6 @@ public class FilesServiceImpl implements FilesService {
             throw new RuntimeException(e);
         }
     }
+
+
 }

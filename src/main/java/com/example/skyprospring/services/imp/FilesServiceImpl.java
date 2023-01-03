@@ -107,6 +107,15 @@ public class FilesServiceImpl implements FilesService {
         return false;
     }
 
+    @Override
+    public Path createTempFile(String suffix)  {
+        try {
+            return Files.createTempFile(Path.of(dataFilePath), "tempFile", suffix);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private void uploadFile(MultipartFile fromFile, File toFile) {
         cleanIngredientFile();
         try (FileOutputStream fos = new FileOutputStream(toFile)) {

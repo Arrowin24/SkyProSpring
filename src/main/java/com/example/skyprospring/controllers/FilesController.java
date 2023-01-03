@@ -1,6 +1,7 @@
 package com.example.skyprospring.controllers;
 
 import com.example.skyprospring.services.FilesService;
+import com.example.skyprospring.services.RecipeService;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,22 +17,38 @@ import java.io.*;
 public class FilesController {
     public FilesService filesService;
 
-    public FilesController(FilesService filesService) {
+    public RecipeService recipeService;
+
+    public FilesController(FilesService filesService, RecipeService recipeService) {
         this.filesService = filesService;
+        this.recipeService = recipeService;
     }
 
     @GetMapping("/export/recipes")
-    public ResponseEntity<InputStreamResource> downloadRecipeFile() throws IOException {
-        InputStreamResource downloadedFile = filesService.downloadRecipeFile();
-        if (downloadedFile != null) {
+    public ResponseEntity<InputStreamResource> downloadRecipeFile() {
+        try {
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .contentLength(downloadedFile.contentLength())
+                    .contentLength(filesService.downloadRecipeFile().contentLength())
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"recipes.json\"")
-                    .body(downloadedFile);
-        } else {
+                    .body(filesService.downloadRecipeFile());
+        } catch (IOException e) {
             return ResponseEntity.noContent().build();
         }
+    }
+
+
+    @GetMapping("/export/recipes/txt")
+    public ResponseEntity<InputStreamResource> downloadRecipeTxtFile() throws IOException {
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .contentLength(recipeService.createRecipesTxtFile().contentLength())
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"recipes.txt\"")
+                    .body(recipeService.createRecipesTxtFile());
+        //} else {
+        //    return ResponseEntity.noContent().build();
+        //}
     }
 
     @PostMapping(value = "/import/recipes", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

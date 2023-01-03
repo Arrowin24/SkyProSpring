@@ -8,9 +8,17 @@ import com.example.skyprospring.services.RecipeService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +35,7 @@ public class RecipeServiceImpl implements RecipeService {
         this.filesService = filesService;
     }
 
-    private  Map<Long, Recipe> recipes = new TreeMap<>();
+    private Map<Long, Recipe> recipes = new TreeMap<>();
     private static long lastId = 0;
 
     @PostConstruct
@@ -122,10 +130,24 @@ public class RecipeServiceImpl implements RecipeService {
         return tenRecipes;
     }
 
+    @Override
+    public InputStreamResource createRecipesTxtFile() throws FileNotFoundException {
+        Path path = filesService.createTempFile("Recipes");
+        try (Writer writer = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
+            for (Recipe recipe : recipes.values()) {
+                writer.append(recipe.toString());
+                writer.append("\n");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return new InputStreamResource(new FileInputStream(path.toFile()));
+    }
+
     private void readFromFile() {
         try {
             String json = filesService.readRecipesFromFile();
-            if(!json.isBlank()){
+            if (!json.isBlank()) {
                 recipes = new ObjectMapper().readValue(json, new TypeReference<>() {
                 });
                 lastId = recipes.size();

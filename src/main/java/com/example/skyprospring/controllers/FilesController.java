@@ -21,11 +21,12 @@ public class FilesController {
     }
 
     @GetMapping("/export/recipes")
-    public ResponseEntity<InputStreamResource> downloadRecipeFile() throws FileNotFoundException {
+    public ResponseEntity<InputStreamResource> downloadRecipeFile() throws IOException {
         InputStreamResource downloadedFile = filesService.downloadRecipeFile();
         if (downloadedFile != null) {
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .contentLength(downloadedFile.contentLength())
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"recipes.json\"")
                     .body(downloadedFile);
         } else {

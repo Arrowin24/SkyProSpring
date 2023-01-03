@@ -26,7 +26,7 @@ public class Recipe {
         }
         buffer.append("Инструкция приготовления").append("\n");
         for (int i = 0; i < steps.size(); i++) {
-            buffer.append(i + 1).append(". ").append(steps.get(i)).append("/n");
+            buffer.append(i + 1).append(". ").append(steps.get(i)).append("\n");
         }
         return buffer.toString();
     }

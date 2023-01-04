@@ -22,12 +22,14 @@ public class FilesController {
 
     @GetMapping("/export/recipes")
     public ResponseEntity<InputStreamResource> downloadRecipeFile() throws IOException {
-        if (filesService.downloadRecipeFile().exists()) {
+        File downloadedFile = filesService.downloadRecipeFile();
+        InputStreamResource stream = new InputStreamResource(new FileInputStream(downloadedFile));
+        if (downloadedFile.exists()) {
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .contentLength(filesService.downloadRecipeFile().contentLength())
+                    .contentLength(downloadedFile.length())
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"recipes.json\"")
-                    .body(filesService.downloadRecipeFile());
+                    .body(stream);
         } else {
             return ResponseEntity.noContent().build();
         }

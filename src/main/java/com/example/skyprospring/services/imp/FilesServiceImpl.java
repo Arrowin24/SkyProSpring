@@ -3,7 +3,6 @@ package com.example.skyprospring.services.imp;
 import com.example.skyprospring.services.FilesService;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -78,10 +77,10 @@ public class FilesServiceImpl implements FilesService {
     }
 
     @Override
-    public InputStreamResource downloadRecipeFile() throws FileNotFoundException {
+    public File downloadRecipeFile() throws FileNotFoundException {
         File file = new File(dataFilePath + "/" + recipesFileName);
         if (file.exists()) {
-            return new InputStreamResource(new FileInputStream(file));
+            return file;
         } else {
             return null;
         }

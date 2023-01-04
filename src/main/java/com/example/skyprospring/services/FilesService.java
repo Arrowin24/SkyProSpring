@@ -23,7 +23,7 @@ public interface FilesService {
 
     File getIngredientDataFile();
 
-    File downloadRecipeFile() throws FileNotFoundException;
+    File downloadRecipeFile();
 
     boolean uploadRecipeFile(MultipartFile file);
 

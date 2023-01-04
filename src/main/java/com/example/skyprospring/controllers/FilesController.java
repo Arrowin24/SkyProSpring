@@ -26,12 +26,14 @@ public class FilesController {
 
     @GetMapping("/export/recipes")
     public ResponseEntity<InputStreamResource> downloadRecipeFile() {
+        File downloadedFile = filesService.downloadRecipeFile();
         try {
+            InputStreamResource stream = new InputStreamResource(new FileInputStream(downloadedFile));
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .contentLength(filesService.downloadRecipeFile().contentLength())
+                    .contentLength(downloadedFile.length())
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"recipes.json\"")
-                    .body(filesService.downloadRecipeFile());
+                    .body(stream);
         } catch (IOException e) {
             return ResponseEntity.noContent().build();
         }
@@ -40,15 +42,17 @@ public class FilesController {
 
     @GetMapping("/export/recipes/txt")
     public ResponseEntity<InputStreamResource> downloadRecipeTxtFile() throws IOException {
-
+        File downloadedFile = recipeService.createRecipesTxtFile();
+        try {
+            InputStreamResource stream = new InputStreamResource(new FileInputStream(downloadedFile));
             return ResponseEntity.ok()
                     .contentType(MediaType.TEXT_PLAIN)
-                    .contentLength(recipeService.createRecipesTxtFile().contentLength())
+                    .contentLength(downloadedFile.length())
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"recipes.txt\"")
-                    .body(recipeService.createRecipesTxtFile());
-        //} else {
-        //    return ResponseEntity.noContent().build();
-        //}
+                    .body(stream);
+        } catch (IOException e) {
+            return ResponseEntity.noContent().build();
+        }
     }
 
     @PostMapping(value = "/import/recipes", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

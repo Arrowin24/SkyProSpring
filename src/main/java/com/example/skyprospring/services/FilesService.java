@@ -1,11 +1,9 @@
 package com.example.skyprospring.services;
 
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.nio.file.Path;
 
 public interface FilesService {
@@ -26,7 +24,7 @@ public interface FilesService {
 
     File getIngredientDataFile();
 
-    InputStreamResource downloadRecipeFile() throws FileNotFoundException;
+    File downloadRecipeFile();
 
     boolean uploadRecipeFile(MultipartFile file);
 

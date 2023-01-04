@@ -2,9 +2,9 @@ package com.example.skyprospring.services;
 
 
 import com.example.skyprospring.model.Recipe;
-import org.springframework.core.io.InputStreamResource;
 
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
@@ -24,5 +24,5 @@ public interface RecipeService {
 
     List<Recipe> getTensRecipeByPage(long page);
 
-    InputStreamResource createRecipesTxtFile() throws FileNotFoundException;
+    File createRecipesTxtFile() throws FileNotFoundException;
 }

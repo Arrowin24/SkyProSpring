@@ -77,7 +77,7 @@ public class FilesServiceImpl implements FilesService {
     }
 
     @Override
-    public File downloadRecipeFile() throws FileNotFoundException {
+    public File downloadRecipeFile() {
         File file = new File(dataFilePath + "/" + recipesFileName);
         if (file.exists()) {
             return file;

@@ -15,6 +15,21 @@ public class Recipe {
     private List<Ingredient> ingredients;
     private List<String> steps;
 
+    public String txtRepresentation(){
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(name).append("\n");
+        buffer.append("Время приготовления: " + time + " мин.").append("\n");
+        buffer.append("Ингредиенты: ").append("\n");
+        for (Ingredient ingredient : ingredients) {
+            buffer.append("\t").append("● ").append(ingredient).append("\n");
+        }
+        buffer.append("Инструкция приготовления").append("\n");
+        for (int i = 0; i < steps.size(); i++) {
+            buffer.append("\t").append(i + 1).append(". ").append(steps.get(i)).append("\n");
+        }
+        return buffer.toString();
+    }
+
     @Override
     public String toString() {
         StringBuilder buffer = new StringBuilder();

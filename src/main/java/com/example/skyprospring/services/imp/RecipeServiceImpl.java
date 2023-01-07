@@ -131,7 +131,7 @@ public class RecipeServiceImpl implements RecipeService {
         Path path = filesService.createTempFile("Recipes");
         try (Writer writer = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
             for (Recipe recipe : recipes.values()) {
-                writer.append(recipe.toString());
+                writer.append(recipe.txtRepresentation());
                 writer.append("\n");
             }
         } catch (IOException e) {

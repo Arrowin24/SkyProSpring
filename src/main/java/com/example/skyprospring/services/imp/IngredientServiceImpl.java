@@ -74,7 +74,7 @@ public class IngredientServiceImpl implements IngredientService {
     private void readFromFile() {
         try {
             String json = filesService.readIngredientsFromFile();
-            if(!json.isBlank()){
+            if (!json.isBlank()) {
                 ingredients = new ObjectMapper().readValue(json, new TypeReference<>() {
                 });
                 lastId = ingredients.size();
